@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  creationTimestamp: null
+  labels:
+    app: jenkins
+  name: jenkins
+spec:
+  serviceName : jenkins
+  replicas: 1
+  minReadySeconds: 10
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: jenkins
+    spec:
+      terminationGracePeriodSeconds: 300
+      containers:
+      - image: himanshi2805/jenkins-img:demo1
+        name: jenkins
+        imagePullPolicy: Always
+        resources: 
+          requests:
+            memory: "256M"
+            cpu: "250m"
+          limits:
+            memory: "512M"
+            cpu: "1000m"
+        ports:
+          - containerPort: 8000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins
+  labels:
+    run: jenkins
+spec:
+  ports:
+  - port: 4000
+    protocol: TCP
+  selector:
+    app: jenkins
+  type: LoadBalancer
